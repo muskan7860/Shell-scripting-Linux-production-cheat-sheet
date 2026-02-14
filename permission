@@ -9,3 +9,8 @@ Test	Meaning
 -r file	Read permission
 -w file	Write permission
 -x file	Execute permission
+===================================================================
+chmod 754 file   # owner rwx, group rx, others r
+chmod 640 file   # owner rw, group r, others none
+chmod 755 file   # common for scripts
+
