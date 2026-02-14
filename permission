@@ -1,0 +1,11 @@
+🔹 How does a script check permissions?
+
+Bash uses file test operators inside [ ].
+
+Test	Meaning
+-f file	File exists & is a regular file
+-d dir	Directory exists
+-e file	File exists (any type)
+-r file	Read permission
+-w file	Write permission
+-x file	Execute permission
