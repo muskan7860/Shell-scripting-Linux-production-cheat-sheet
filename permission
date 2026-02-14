@@ -13,4 +13,9 @@ Test	Meaning
 chmod 754 file   # owner rwx, group rx, others r
 chmod 640 file   # owner rw, group r, others none
 chmod 755 file   # common for scripts
+=================================================================
+chmod u+rwx,g+rx,o+r "$file"
+or
+chmod 754 "$file"
+
 
