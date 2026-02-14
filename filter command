@@ -1,0 +1,223 @@
+🚀 Shell Scripting & Linux Production Cheat Sheet
+
+A Senior DevOps Engineer’s Daily Commands & Scenarios
+
+📌 1. VIM EDITOR – REAL PRODUCTION SCENARIOS
+🔁 Replace text (safe & fast)
+
+Replace ro → to in entire file
+
+:%s/ro/to/g
+
+
+Replace with confirmation
+
+:%s/ro/to/gc
+
+
+Replace in line range (10–50)
+
+:10,50s/ro/to/g
+
+
+Replace exact word only
+
+:%s/\<ro\>/to/g
+
+🧹 Delete lines in Vim
+
+Delete current line
+
+dd
+
+
+Delete 10 lines
+
+10dd
+
+
+Delete line range
+
+:20,40d
+
+
+Delete all lines
+
+:%d
+
+🔍 Filter / Search in Vim
+
+Search word
+
+/error
+
+
+Search case-insensitive
+
+/error\c
+
+
+Show line numbers
+
+:set number
+
+📌 2. LINUX FILE & LOG FILTERING (VERY COMMON)
+🔍 Filter logs
+
+Find ERROR lines
+
+grep ERROR app.log
+
+
+Case-insensitive
+
+grep -i error app.log
+
+
+Count occurrences
+
+grep ERROR app.log | wc -l
+
+🔄 Real-time log monitoring
+tail -f app.log
+
+
+Last 100 lines:
+
+tail -n 100 app.log
+
+📌 3. DELETE LINES FROM FILE (LINUX)
+🧹 Delete specific lines (sed)
+
+Delete lines 10–20
+
+sed -i '10,20d' app.log
+
+
+Delete matching pattern
+
+sed -i '/DEBUG/d' app.log
+
+🔐 SAFE MODE (production)
+sed '10,20d' app.log > new.log && mv new.log app.log
+
+📌 4. CLEAR LOG FILE (WITHOUT DELETING FILE)
+
+⚠️ Production-safe
+
+> app.log
+
+
+or
+
+truncate -s 0 app.log
+
+
+✔ App continues running
+✔ Permissions intact
+
+📌 5. LOG ROTATION (MUST FOR PROD)
+Create config
+sudo vi /etc/logrotate.d/myapp
+
+/var/log/myapp/*.log {
+    daily
+    rotate 7
+    compress
+    missingok
+    notifempty
+    copytruncate
+}
+
+
+Test:
+
+logrotate -d /etc/logrotate.d/myapp
+
+📌 6. DISK FULL TROUBLESHOOTING (AWS / PROD)
+Check disk
+df -h
+
+Find large folders
+du -sh /var/* | sort -h
+
+Find large files
+find / -type f -size +1G 2>/dev/null
+
+Emergency cleanup
+truncate -s 0 /var/log/app.log
+
+📌 7. BACKUP BEFORE DELETE (BEST PRACTICE)
+cp app.log app.log.bkp
+
+
+Or compressed backup:
+
+tar -czf logs_backup.tar.gz /var/log/myapp
+
+📌 8. AUTO CLEAN LOGS (SHELL SCRIPT)
+🧾 log_cleanup.sh
+#!/bin/bash
+
+LOG_DIR="/var/log/myapp"
+DAYS=7
+
+find $LOG_DIR -name "*.log" -mtime +$DAYS -exec rm -f {} \;
+
+echo "Logs cleaned on $(date)"
+
+
+Cron job:
+
+0 2 * * * /path/log_cleanup.sh
+
+📌 9. COMMON AWK COMMANDS (INTERVIEW 🔥)
+
+Print column
+
+awk '{print $2}' file
+
+
+Print line number + content
+
+awk '{print NR,$0}' file
+
+
+Filter ERROR
+
+awk '/ERROR/' app.log
+
+📌 10. COMMON SED COMMANDS
+
+Replace text
+
+sed 's/old/new/g' file
+
+
+Delete empty lines
+
+sed '/^$/d' file
+
+📌 11. PROD SAFETY RULES (VERY IMPORTANT)
+
+✅ Always take backup
+✅ Prefer preview before delete
+✅ Use logrotate not manual cleanup
+✅ Use truncate, not rm, for live logs
+
+📌 12. INTERVIEW ONE-LINERS (SAVE THESE)
+
+“I use logrotate for prevention, sed/awk for cleanup, and cron for automation.”
+
+“In production, I truncate logs instead of deleting files to avoid service disruption.”
+
+“For mass edits, I prefer Vim’s :%s with confirmation.”
+
+📌 13. QUICK REVISION TABLE
+Task	Command
+Replace text	:%s/old/new/g
+Delete lines	sed '10,20d'
+Clear log	truncate -s 0
+Filter log	grep ERROR
+Live logs	tail -f
+Disk check	df -h
